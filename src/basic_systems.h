@@ -23,10 +23,10 @@ void AccelarationSystem(miecs_world *world, float delta_time)
 {
     miecs_view_iter it;
     miecs_entity e;
-    miecs_view_begin(&it, world, 2, Velocity_type, Accelaration_type);
+    miecs_view_begin(&it, world, 2, Velocity_type, Acceleration_type);
     while (miecs_view_next(&it, &e)) {
         Velocity *v = miecs_component_get(world, e, Velocity_type);
-        Accelaration *a = miecs_component_get(world, e, Accelaration_type);
+        Acceleration *a = miecs_component_get(world, e, Acceleration_type);
 
         v->vx += a->ax * delta_time;
         v->vy += a->ay * delta_time;
@@ -68,8 +68,16 @@ void SpriteDrawingSystem(miecs_world *world)
     for (int k = 0; k < count; ++k) {
         Sprite *s = miecs_component_get(world, entities[k], Sprite_type);
         Position *p = miecs_component_get(world, entities[k], Position_type);
+        // sc and r may be NULL
+        Scale *sc = miecs_component_get(world, entities[k], Scale_type);
+        Rotation *r = miecs_component_get(world, entities[k], Rotation_type);
+        float scale = sc ? sc->scale : 1.0f;
+        float rotation = r ? r->rotationInDegrees : 0.0f;
+
         BeginShaderMode(s->shader);
-        DrawTexture(s->texture, (int)p->x, (int)p->y, WHITE);
+        DrawTextureEx(s->texture, (Vector2){ p->x + (scale * s->texture.width * 0.5f), 
+                                             p->y + (scale * s->texture.height * 0.5f)},
+                                             rotation, scale, WHITE);
         EndShaderMode();
     }
 

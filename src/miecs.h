@@ -51,7 +51,7 @@ LICENSE
     If your jurisdiction does not recognize the public domain, you may treat
     this file as licensed under the MIT license:
 
-        Copyright (c) 2024 Your Name
+        Copyright (c) 2024 Maii
 
         Permission is hereby granted, free of charge, to any person obtaining a
         copy of this software and associated documentation files (the

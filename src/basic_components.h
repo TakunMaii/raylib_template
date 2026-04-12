@@ -11,6 +11,14 @@ typedef struct {
 } Position;
 
 typedef struct {
+    float scale;
+} Scale;
+
+typedef struct {
+    float rotationInDegrees;
+} Rotation;
+
+typedef struct {
     Texture2D texture;
     // the less the layer, the earlier it is drawn (background -> foreground)
     int layer;
@@ -23,7 +31,7 @@ typedef struct {
 
 typedef struct {
     float ax, ay;
-} Accelaration;
+} Acceleration;
 
 typedef struct {
     struct {
@@ -37,17 +45,21 @@ typedef struct {
 } ParticleCollection;
 
 miecs_component_type Position_type;
+miecs_component_type Scale_type;
+miecs_component_type Rotation_type;
 miecs_component_type Sprite_type;
 miecs_component_type Velocity_type;
 miecs_component_type ParticleCollection_type;
-miecs_component_type Accelaration_type;
+miecs_component_type Acceleration_type;
 
 void RegisterBasicComponents(miecs_world *world)
 {
     Position_type = miecs_component_register(world, "Position", sizeof(Position));
+    Scale_type = miecs_component_register(world, "Scale", sizeof(Scale));
+    Rotation_type = miecs_component_register(world, "Rotation", sizeof(Rotation));
     Sprite_type = miecs_component_register(world, "Sprite", sizeof(Sprite));
     Velocity_type = miecs_component_register(world, "Velocity", sizeof(Velocity));
-    Accelaration_type = miecs_component_register(world, "Accelaration", sizeof(Accelaration));
+    Acceleration_type = miecs_component_register(world, "Acceleration", sizeof(Acceleration));
     ParticleCollection_type = miecs_component_register(world, "ParticleCollection", sizeof(ParticleCollection));
 }
 
