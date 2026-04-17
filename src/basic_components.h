@@ -20,10 +20,20 @@ typedef struct {
 
 typedef struct {
     Texture2D texture;
+    Rectangle sourceRec;
     // the less the layer, the earlier it is drawn (background -> foreground)
     int layer;
     Shader shader;
+    bool flipX;
 } Sprite;
+
+typedef struct
+{
+    Texture2D spriteSheet;
+    int frameCount;
+    float frameTime;
+    float _timer;
+} SpriteAnimation;
 
 typedef struct {
     float vx, vy;
@@ -44,6 +54,17 @@ typedef struct {
     int count;
 } ParticleCollection;
 
+typedef struct {
+    float biasX;
+    float biasY;
+    float width;
+    float height;
+    bool isTrigger;
+    bool isStatic;
+
+    void (*onCollision)(miecs_world *world, miecs_entity self, miecs_entity other);
+} Collision;
+
 miecs_component_type Position_type;
 miecs_component_type Scale_type;
 miecs_component_type Rotation_type;
@@ -51,6 +72,8 @@ miecs_component_type Sprite_type;
 miecs_component_type Velocity_type;
 miecs_component_type ParticleCollection_type;
 miecs_component_type Acceleration_type;
+miecs_component_type SpriteAnimation_type;
+miecs_component_type Collision_type;
 
 void RegisterBasicComponents(miecs_world *world)
 {
@@ -61,6 +84,8 @@ void RegisterBasicComponents(miecs_world *world)
     Velocity_type = miecs_component_register(world, "Velocity", sizeof(Velocity));
     Acceleration_type = miecs_component_register(world, "Acceleration", sizeof(Acceleration));
     ParticleCollection_type = miecs_component_register(world, "ParticleCollection", sizeof(ParticleCollection));
+    SpriteAnimation_type = miecs_component_register(world, "SpriteAnimation", sizeof(SpriteAnimation));
+    Collision_type = miecs_component_register(world, "Collision", sizeof(Collision));
 }
 
 #endif
