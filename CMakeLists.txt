@@ -14,6 +14,11 @@ add_subdirectory(libs/raylib)
 
 add_executable(main
     src/main.c
+    src/raygui_impl.c
+)
+
+target_include_directories(main PRIVATE
+    libs/raygui/src
 )
 
 target_link_libraries(main PRIVATE raylib)

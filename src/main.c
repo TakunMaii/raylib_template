@@ -4,6 +4,8 @@
 #include "basic_systems.h"
 #include <raylib.h>
 #include <raymath.h>
+#include <raygui.h>
+#include <stdbool.h>
 
 int main(void)
 {
@@ -11,7 +13,13 @@ int main(void)
     const int window_height = 450;
     const float ball_radius = 24.0f;
 
-    InitWindow(window_width, window_height, "raylib + miecs basic example");
+    // RayGUI state variables
+    float speed_multiplier = 1.0f;
+    bool pause_simulation = false;
+    Color ball_color = ORANGE;
+    int selected_color = 0;
+
+    InitWindow(window_width, window_height, "raylib + raygui + miecs example");
     SetTargetFPS(60);
 
     miecs_world *world = miecs_world_create();
@@ -29,7 +37,11 @@ int main(void)
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
-        VelocitySystem(world, dt);
+        if (pause_simulation) {
+            dt = 0.0f;
+        }
+
+        VelocitySystem(world, dt * speed_multiplier);
 
         // Handle ball bouncing on window edges
         miecs_view_iter move_it;
@@ -56,11 +68,34 @@ int main(void)
         miecs_view_begin(&draw_it, world, 1, Position_type);
         while (miecs_view_next(&draw_it, &e)) {
             Position *pos = (Position *)miecs_component_get(world, e, Position_type);
-            DrawCircleV((Vector2){ pos->x, pos->y }, ball_radius, ORANGE);
+            DrawCircleV((Vector2){ pos->x, pos->y }, ball_radius, ball_color);
         }
 
-        DrawText("MIECS + raylib basic demo", 20, 20, 24, DARKGRAY);
+        // Draw RayGUI controls
+        int btn_action = GuiButton((Rectangle){ 20, 100, 120, 30 }, pause_simulation ? "Resume" : "Pause");
+        if (btn_action) pause_simulation = !pause_simulation;
+
+        GuiLabel((Rectangle){ 20, 140, 100, 20 }, "Speed Multiplier:");
+        GuiSlider((Rectangle){ 20, 165, 200, 20 }, "0.1x", "5.0x", &speed_multiplier, 0.1f, 5.0f);
+
+        GuiLabel((Rectangle){ 20, 195, 100, 20 }, "Ball Color:");
+        int new_color;
+        GuiComboBox((Rectangle){ 20, 220, 120, 30 }, "ORANGE;BLUE;RED;GREEN;YELLOW;PURPLE", &new_color);
+        if (new_color != selected_color) {
+            selected_color = new_color;
+            switch (selected_color) {
+                case 0: ball_color = ORANGE; break;
+                case 1: ball_color = BLUE; break;
+                case 2: ball_color = RED; break;
+                case 3: ball_color = GREEN; break;
+                case 4: ball_color = YELLOW; break;
+                case 5: ball_color = PURPLE; break;
+            }
+        }
+
+        DrawText("MIECS + raylib + raygui demo", 20, 20, 24, DARKGRAY);
         DrawText("Entity: Position + Velocity", 20, 52, 18, GRAY);
+        DrawText(TextFormat("Speed: %.2fx", speed_multiplier), 20, 270, 16, DARKGRAY);
         EndDrawing();
     }
 
